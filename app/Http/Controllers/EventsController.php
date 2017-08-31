@@ -34,7 +34,7 @@ class EventsController extends Controller
         }
     	$event = new Events();
     	$event->title = $request->input('title');
-    	$event->date = $request->input('date');
+    	$event->date = $request->input('date').':00'; //Appends 00(seconds), to match Valid date string to work with date string
     	$event->description = $request->input('description');
     	$event->host = $request->input('host');
     	$event->user_id = Auth::user()->id;
