@@ -12,8 +12,8 @@
 */
 
 Route::get('/', 'HomeController@index');
-
 Auth::routes();
+Route::get('/getapp','HomeController@getApp');
 Route::group(['middleware'=>'auth'],function(){
 	Route::get('/newevent', 'EventsController@showEventForm')->name('addEvent');
 	Route::post('/newevent', 'EventsController@saveEvent');
@@ -22,13 +22,4 @@ Route::group(['middleware'=>'auth'],function(){
 	Route::get('/events/delete/{id}','EventsController@deleteEvent')->name('deleteEvent');
 	Route::get('/events/edit/{id}','EventsController@editEvent')->name('editEvent');
 	Route::post('/events/edit/{id}','EventsController@updateEvent')->name('updateEvent');
-	//Route::get('/home', 'HomeController@index');
 });
-/*Route::get('/updateall',function(){
-	$events = \App\Models\Events::all();
-	foreach($events as $event){
-		$ev = \App\Models\Events::find($event->id);
-		$ev->date = $event->created_at;
-		$ev->save();
-	}
-});*/
