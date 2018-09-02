@@ -44,14 +44,12 @@
                                 @endif
                             </div>
                             <span class="location_details">
-								<input name="lat" type="hidden" value="">
-	  							<input name="lng" type="hidden" value="">
-	  							<input name="formatted_address" type="hidden" value="">
-	  							<input name="locality" type="hidden" value="">
-	  							<input name="state" type="hidden" value="">
-	  							<input name="country" type="hidden" value="">
-	  							<input name="administrative_area_level_1" type="hidden" value="">
-	  							<input name="country" type="hidden" value="">
+								<input name="lat" type="hidden" id="lat" value="">
+	  							<input name="lng" type="hidden" id="lng" value="">
+	  							<input name="formatted_address" id="formatted_address" type="hidden" value="">
+	  							<input name="locality" id="locality" type="hidden" value="">
+	  							<input name="state" type="hidden" id="state" value="">
+	  							<input name="country" type="hidden" id="country" value="">
   							</span>
                         </div>
 
@@ -87,24 +85,38 @@
                     </form>
 @stop
 @section('bottom_scripts')
-     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC3FHQ-gE5NeiJfug9NQVVB3QZqRyUwhUg&libraries=places"></script>
-    <script type="text/javascript" src='{{asset('js/jquery.geocomplete.js')}}'></script>
     <script>
-      $(function(){
-        
-        $(".geocomplete").geocomplete({ details: ".location_details" })
-          .bind("geocode:result", function(event, result){
-            //$.log("Result: " + result.formatted_address);
-          })
-          .bind("geocode:error", function(event, status){
-            //$.log("ERROR: " + status);
-          })
-          .bind("geocode:multiple", function(event, results){
-            //$.log("Multiple: " + results.length + " results found");
+      function initMap() {
+        var input = document.getElementById('location');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.setFields(
+            ['address_components', 'geometry', 'icon', 'name']);
+        autocomplete.addListener('place_changed', function() {
+          var place = autocomplete.getPlace();
+          $.each(place.address_components, function( index, value ) {
+            if(value.types.indexOf('locality') !== -1 || value.types.indexOf('sublocality') !== -1){
+                $('.location_details input#locality').val(value.long_name);
+            }
+            if(value.types.indexOf('administrative_area_level_1') !== -1){
+                $('.location_details input#state').val(value.long_name);
+            }
+            if(value.types.indexOf('country') !== -1){
+                $('.location_details input#country').val(value.long_name);
+            }
           });
-        
-      });
+          $('.location_details input#formatted_address').val(place.name);
+          $('.location_details input#lat').val(place.geometry.location.lat());
+          $('.location_details input#lng').val(place.geometry.location.lat());
+          if (!place.geometry) {
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+        });
+      }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3FHQ-gE5NeiJfug9NQVVB3QZqRyUwhUg&libraries=places&callback=initMap"
+        async defer></script>
+    
     <script src="{{ asset('js/moment.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
     <script type="text/javascript">
