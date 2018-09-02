@@ -106,7 +106,7 @@
           });
           $('.location_details input#formatted_address').val(place.name);
           $('.location_details input#lat').val(place.geometry.location.lat());
-          $('.location_details input#lng').val(place.geometry.location.lat());
+          $('.location_details input#lng').val(place.geometry.location.lng());
           if (!place.geometry) {
             window.alert("No details available for input: '" + place.name + "'");
             return;
